@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-<html>
-<body>
-<?php
-echo "Hello World";
+<?
+  echo "지금 시간은";
+  echo date("Y-m-d H:i:s");
+  echo "입니다";
 ?>
-</body>
-</html>
