@@ -1,174 +1,432 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="Ko">
+<style>
+    .sku_logo_img {
+        margin-right: 10px;
+    }
+</style>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Firebase-Tutorial</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-    <link rel="stylesheet" href="css/custom.css">
-  </head>
-  <body>
-    <!-- header Top 영역 -->
-    <header class="navbar-fixed">
-        <nav>
-            <div class="nav-wrapper valign-wrapper">
-                <a href="#" id="aBackBtn" class="small material-icons left hiddendiv">arrow_back</a>
-                <span id="spTitle" class="brand-logo center">Firebase-Tutorial</span>
-                <a href="#dvAddUser" id="aInvite" class="small material-icons right hiddendiv modal-trigger">add</a>
-            </div>
-        </nav>
-    </header>
-    <!-- main 컨텐츠 영역 -->
-    <main>
-        <!-- 유저리스트탭 영역 -->
-        <div id="tab-1" class="col s12 tabContents">
-            <ul id="ulUserList" class="collection">
-            </ul>
-        </div>
-        <!-- 채팅방리스트탭 영역 -->
-        <div id="tab-2" class="col s12 tabContents" style="display: none">
-            <ul id="ulRoomList" class="collection">
-            </ul>
-        </div>
-        <!-- 설정탭 영역 -->
-        <div id="tab-3" class="col s12 tabContents">
-            <ul class="collection">
-                <li id="liLogOut" class="collection-item">로그아웃</li>
-            </ul>
-        </div>
-        <!-- 채팅방 메세지화면 영역 -->
-        <div id="tab-4" class="col s12 tabContents ">
-            <ul id="ulMessageList" class="collection">
-            </ul>
-            <div id="dvMsgForm" class="meta-bar chat">
-                <div id="dvInputChat" contenteditable="true" placeholder="메세지 작성"></div>
-                <i id='iBtnAttach' class="small material-icons">attach_file</i>
-                <i id='iBtnSend' class="small material-icons">send</i>
-                <input type="file" id="attachFile" style="display:none;"/>
-            </div>
-        </div>
-    </main>
-    <!-- footer 탭 영역 -->
-    <footer>
-        <ul id="tabs" class="tabs tabs-fixed-width">
-            <li class="tab col s3 blue darken-2"><a id="tabUserList" href="#tab-1"><i class="small material-icons white-text">person</i></a></li>
-            <li class="tab col s3 blue darken-2"><a id="tabRoomList" href="#tab-2"><i class="small material-icons white-text">message</i></a></li>
-            <li class="tab col s3 blue darken-2"><a id="tabSetting" href="#tab-3"><i class="small material-icons white-text">settings</i></a></li>
-            <li class="tab col s3" style="display:none"><a id="tabMessageList" href="#tab-4"></a></li>
-        </ul>
-    </footer>
-    <!-- 로그인 화면 및 가입화면 영역 -->
-    <div id="dvAuth">
-      <div id="dvLogin">
-          <h5>로그인</h5>
-          <div id="dvSocial">
-              <ul class="btnGroup">
-                  <li id="liGoogleBtn" class="waves-effect waves-teal btn-flat"><i></i>구글 계정으로 가입 및 로그인</li>
-                  <li id="liFacebookBtn" class="waves-effect waves-teal btn-flat"><i></i>페이스북 계정으로 가입 및 로그인</li>
-              </ul>
-              <em class="or">or</em>
-          </div>
-          <div id="dvEmail">
-              <input type="email" id="userName" name="userName" class="input-text" placeholder="이메일 아이디">
-              <input type="password" id="password" name="password" class="input-text" maxlength="17" placeholder="비밀번호">
-              <ul class="btnGroup">
-                  <li id="liEmailBtn" class="waves-effect waves-teal btn-flat">이메일으로 로그인</li>
-              </ul>
-              <ul class="btnGroup">
-                  <li id="liEmailJoin" class="waves-effect waves-teal btn-flat">이메일으로 가입</li>
-              </ul>
-          </div>
-      </div>
-      <div id="dvJoin">
-          <h5>이메일 가입</h5>
-          <input type="text" id="joinUserName" name="userName" class="input-text" placeholder="이름">
-          <input type="email" id="joinUserEmail" name="userName" class="input-text" placeholder="이메일 아이디">
-          <input type="password" id="joinPassword" name="password" class="input-text" maxlength="17" placeholder="비밀번호">
-          <input type="password" id="joinRePassword" class="input-text" maxlength="17" placeholder="비밀번호 확인">
-          <ul class="btnGroup">
-              <li id="liEmailJoinSubmit" class="waves-effect waves-teal btn-flat">이메일으로 가입</li>
-          </ul>
-      </div>
-    </div>
-    <!-- Modal 영역 -->
-    <div id="dnModal" class="modal col s4">
-        <div class="modal-content">
-            <h5>업로드</h5>
-            <div class="progress">
-                <div id="dvProgressBar" class="determinate"></div>
-                <div id="dvFileName"></div>
-            </div>
-        </div>
-    </div>
-    <div id="dvAddUser" class="modal">
-        <div class="modal-content">
-          <h5>초대</h5>
-          <ul id="ulAddUserList" class="collection">
-          </ul>
-        </div>
-        <div class="modal-footer">
-            <a id="aConfirmInvite" href="#!" class="modal-action modal-close waves-effect waves-green btn blue white-text">추가</a>
-        </div>
-    </div>
-    <!-- template 영역 -->
-    <!-- template 유저리스트 영역 -->
-    <script type="text/template" id="templateUserList">
-            <li id="li<%=targetUserUid %>" data-targetUserUid="<%=targetUserUid %>" data-username="<%=userName %>" class="collection-item avatar list">
-                <img src="<%=profileImg ? profileImg : 'img/noprofile.png'  %>" alt="" class="circle">
-                <span class="title"><%=userName %></span>
-                <span class="small material-icons right hiddendiv done">done</span>
-                <span class="small material-icons right hiddendiv mood yellow-text">mood</span>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>성결대 코로나 도우미</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <img class="sku_logo_img" , src="./img/sku_logo.png" width="15%">
+                <div>SKU 코로나 도우미<sup></sup></div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="index.html">
+                    <i class="fa fa-home"></i>
+                    <span>메인 화면</span></a>
             </li>
-    </script>
-    <!-- template 메세지리스트 영역 -->
-    <script type="text/template" id="templateMessageList">
-        <li id="li<%=key%>" class="collection-item avatar" data-key="<%=key%>">
-            <img src="<%=profileImg ? profileImg : 'img/noprofile.png'  %>" alt="" class="circle">
-            <span class="title"><%=userName %></span><span class="time"><%=time %></span>
-            <p><%=message %></p>
-        </li>
-    </script>
-    <!-- template 채팅방리스트 영역 -->
-    <script type="text/template" id="templateRoomList">
-        <li id="liRoom<%=roomId %>" data-roomId="<%=roomId %>" data-roomTitle='<%=roomTitle%>' data-roomUserName="<%=roomUserName%>"
-            data-roomType="<%=roomType%>" data-roomOneVSOneTarget="<%=roomOneVSOneTarget%>" data-roomUserlist="<%=roomUserlist %>" class="collection-item avatar" >
-            <img src="<%=profileImg ? profileImg : 'img/noprofile.png'  %>" alt="" class="circle">
-            <span class="title"><%=roomTitle%></span>
-            <p><%=lastMessage %></p>
-            <a href="#!" class="secondary-content"> <%=datetime %></a>
-        </li>
-    </script>
-      <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-      <script type="text/javascript" src="js/materialize.min.js"></script>
-      <script type="text/javascript" src="js/underscore-min.js"></script>
-      <!-- update the version number as needed -->
-      <script defer src="/__/firebase/4.6.1/firebase-app.js"></script>
-      <script defer src="/__/firebase/4.6.1/firebase-auth.js"></script>
-      <script defer src="/__/firebase/4.6.1/firebase-database.js"></script>
-      <script defer src="/__/firebase/4.6.1/firebase-messaging.js"></script>
-      <script defer src="/__/firebase/4.6.1/firebase-storage.js"></script>
-      <script defer src="/__/firebase/init.js"></script>
-      <script>
-          /**
-           *  FirebaseChat ES5 클래스
-           */
-          function FirebaseChat(){
 
-          }
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-          /**
-           * Dom 로딩 후 동작
-           */
-          document.addEventListener('DOMContentLoaded', function() {
-              //FirebaseChat 클래스 초기화
-              window.fbChat = new FirebaseChat();
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                메뉴
+            </div>
 
-              //다운로드 프로그레스 팝업 modal 설정
-              $('#dnModal').modal();
-              //채팅방 초대 modal 설정
-              $('#dvAddUser').modal();
-          });
-      </script>
-  </body>
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link" href="http://ncov.mohw.go.kr/bdBoardList_Real.do" target="_blank">
+                    <i class="fa fa-thermometer-full"></i>
+                    <span>국내 코로나 발생 현황</span>
+                </a>
+                <!-- <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Custom Components:</h6>
+                        <a class="collapse-item" href="buttons.html">Buttons</a>
+                        <a class="collapse-item" href="cards.html">Cards</a>
+                    </div>
+                </div> -->
+            </li>
+
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link" href="http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=14&ncvContSeq=&contSeq=&board_id=&gubun=" target="_blank">
+                    <i class="fa fa-thermometer-three-quarters"></i>
+                    <span>국외 코로나 발생 현황</span>
+                </a>
+
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fa fa-money"></i>
+                    <span>국가 재난지원금 안내</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">지역별 안내</h6>
+                        <a class="collapse-item" href="https://www.gov.kr/portal/coronaPolicy/list/emergCalamSportAmt" target="_blank">정부 지원 안내</a>
+                        <a class="collapse-item" href="https://basicincome.gg.go.kr/" target="_blank">경기도 지역 안내</a>
+                        <a class="collapse-item" href="http://news.seoul.go.kr/welfare/archives/518698" target="_blank">서울 지역 안내</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="corona_safe.html">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>안전수칙</span></a>
+            </li>
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="board.php">
+                    <i class="	fa fa-pencil-square-o"></i>
+                    <span>게시판</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+                    <!-- Topbar Search
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+                            </div>
+                        </div>
+                    </form> -->
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- <div class="topbar-divider d-none d-sm-block"></div> -->
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">고상욱</span>
+                                <img class="img-profile rounded-circle" src="./img/21261-6-star-lord-free-download.png">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Settings
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i> Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xl-6 ">
+                            <!-- Project Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">국내 코로나19 2020-06-21 AM 11:17 기준</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="small font-weight-bold">국내 총 확진자 12,421명 <span class="float-right">100%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="12421" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">완치자 10,868명 <span class="float-right">87.4%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 87.4%" aria-valuenow="10868" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">사망자 280명 <span class="float-right">2.25%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar" role="progressbar" style="width: 2.25%" aria-valuenow="280" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6">
+                            <!-- Project Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">전세계 코로나19 2020-06-21 AM 11:17 기준</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="small font-weight-bold">전세계 총 확진자 875만명 <span class="float-right">100%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="875M" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">완치자 433만명 <span class="float-right">49.48%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 49.48%" aria-valuenow="433M" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">사망자 46.3만명 <span class="float-right">5.29%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar" role="progressbar" style="width: 5.29%" aria-valuenow="46.3M" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Pie Chart -->
+                        <div class="col-xl-6">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">국내 코로나19 현황</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2">
+                                        <canvas id="myPieChart"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+                                        <span class="mr-2">
+                          <i class="fas fa-circle text-primary"></i> 확진자
+                        </span>
+                                        <span class="mr-2">
+                          <i class="fas fa-circle text-success"></i> 완치자
+                        </span>
+                                        <span class="mr-2">
+                          <i class="fas fa-circle text-info"></i> 사망자
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Pie Chart -->
+                        <div class="col-xl-6">
+                            <div class="card shadow mb-3">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">전세계 코로나19 현황</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2">
+                                        <canvas id="myPieChart1"></canvas>
+                                    </div>
+                                    <div class="mt-3 text-center small">
+                                        <span class="mr-2">
+                                          <i class="fas fa-circle text-primary"></i> 확진자
+                                        </span>
+                                        <span class="mr-2">
+                                          <i class="fas fa-circle text-success"></i> 완치자
+                                        </span>
+                                        <span class="mr-2">
+                                          <i class="fas fa-circle text-info"></i> 사망자
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Area Chart -->
+                        <div class="col-xl-12">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">국내 확진자 증가 그래프</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="chart-area">
+                                        <canvas id="myAreaChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- Content Row end -->
+
+
+                    <!-- 공적 마스크 안내 카드보드 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">공적 마스크 안내</h6>
+                        </div>
+                        <div class="card-body">
+                            <iframe src="https://mask.livecorona.co.kr/?utm_source=livecod_main&amp;utm_medium=iframe&amp;utm_campaign=maskmap_embed " frameborder="0 " style="border:0;width:100%;height:50rem;padding-top:0; " allow="geolocation "></iframe>
+                        </div>
+                    </div>
+
+                    <!-- 코로나 위젯 카드보드 1 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">전세계 코로나 현황</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="flourish-embed flourish-map" data-src="story/225979">
+                                <script src="https://public.flourish.studio/resources/embed.js"></script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 코로나 위젯 카드보드 1 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">전세계 코로나 현황</h6>
+                        </div>
+                        <div class="card-body">
+                            <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+                            <div class="elfsight-app-8fd3abbc-e7ab-4837-b517-0cd60902a3a3"></div>
+                        </div>
+                    </div>
+
+                    <!-- 코로나 위젯 카드보드 1 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">전세계 코로나 현황</h6>
+                        </div>
+                        <div class="card-body">
+                            <iframe src="https://public.domo.com/cards/avnAV" width="100%" height="600" marginheight="0" marginwidth="0" frameborder="0"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- 코로나 위젯 카드보드 1 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">전세계 코로나 현황</h6>
+                        </div>
+                        <div class="card-body">
+                            <iframe src="https://public.domo.com/cards/dwoBJ" width="100%" height="600" marginheight="0" marginwidth="0" frameborder="0"></iframe>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; 성결대 코로나 도우미</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Logout Modal-->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+                    </div>
+                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-primary" href="login.html">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
+
+</body>
+
 </html>
